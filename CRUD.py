@@ -60,6 +60,12 @@ def delete_employee(emp_id):
         print("Employee not found")
     session.close()
 
+def search_employee_ID(emp_ID):
+    session = Session()
+    search = session.query(Employee).filter(Employee.id == emp_ID).first() is not None
+    session.close()
+    return search
+
 
 def add_car(manufacturer, model, year, cost_price, selling_price):
     session = Session() 
@@ -104,7 +110,7 @@ def update_car(car_id, **kwargs):
         
     session.commit()
     print("Information updated")
-    session.close()
+    session.close() 
 
 def delete_car(car_id):
     session = Session()
@@ -117,17 +123,22 @@ def delete_car(car_id):
         print("Car not found")
     session.close()
 
+def search_car_ID(car_ID):
+    session = Session()
+    search = session.query(Car).filter(Car.id == car_ID).first() is not None
+    session.close()
+    return search
 
 def add_sale(employee_id, car_id, sold_price):
     session = Session()
     employee = session.query(Employee).get(employee_id)
     if not employee:
-        print("Employee not foud")
+        print("Employee not found")
         session.close()
         return
     car = session.query(Car).get(car_id)
     if not car:
-        print("Car not foud")
+        print("Car not found")
         session.close()
         return
     
@@ -148,6 +159,7 @@ def add_sale(employee_id, car_id, sold_price):
 
     session.commit()
     print(f"Sale recorded. Profit: {sold_price - car.cost_price}")
+    session.close()
 
 
 def cars_sorted(sort_field):
@@ -179,16 +191,16 @@ def employee_total_sales():
     resault = (session.query(Employee.first_name, Employee.last_name, func.sum(Sale.sold_price)).join(Sale, Sale.employee_id == Employee.id).group_by(Employee.id).all())
 
     for first, last, total in resault:
-        print(f"{first} {last} --> Total sale: {total}")
+        print(f"{first} {last} --> Total sales: {total}")
 
     session.close()
 
 def employee_profit(employee_id):
     session = Session()
-    resault = (session.query(Employee.first_name, Employee.last_name, func.sum(Sale.sold_price - Car.cost_price)).join(Sale, Sale.employee_id == Employee.id).join(Car, Car.id == Sale.car_id).group_by(Employee.id).all())
+    resault = (session.query(Employee.first_name, Employee.last_name, func.sum(Sale.sold_price - Car.cost_price)).join(Sale, Sale.employee_id == Employee.id).join(Car, Car.id == Sale.car_id).filter(Employee.id == employee_id).group_by(Employee.id).first())
 
     for first, last, total in resault:
-        print(f"{first} {last} --> Total sale: {total}")
+        print(f"{first} {last} --> Total sales: {total}")
         
     session.close()
 
