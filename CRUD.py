@@ -22,6 +22,10 @@ def add_employee(first_name, last_name, position, phone, email):
 def all_employees():
     session = Session()
     employees = session.query(Employee).all()
+    if not employees:
+        print("Employees not found")
+        session.close()
+        return
 
     for emp in employees:
             print(f"""
@@ -84,6 +88,10 @@ def add_car(manufacturer, model, year, cost_price, selling_price):
 def all_cars():
     session = Session()
     cars = session.query(Car).all()
+    if not cars:
+        print("Cars not found")
+        session.close()
+        return
 
     for car in cars:
             print(f"""
@@ -160,48 +168,4 @@ def add_sale(employee_id, car_id, sold_price):
     session.commit()
     print(f"Sale recorded. Profit: {sold_price - car.cost_price}")
     session.close()
-
-
-def cars_sorted(sort_field):
-    session = Session()
-    column =  getattr(Car, sort_field)
-    cars = session.query(Car).order_by(column).all()
-
-    for car in cars:
-        print(car.id, car.manufacturer, car.model, car.year, car.cost_price, car.selling_price, car.status)
-
-    session.close()
-
-from sqlalchemy import desc
-
-def cars_sorted_desc(sort_field):
-    session = Session()
-    column =  getattr(Car, sort_field)
-    cars = session.query(Car).order_by(desc(column)).all()
-
-    for car in cars:
-        print(car.id, car.manufacturer, car.model, car.year, car.cost_price, car.selling_price, car.status)
-
-    session.close()
-
-from sqlalchemy import func
-
-def employee_total_sales():
-    session = Session()
-    resault = (session.query(Employee.first_name, Employee.last_name, func.sum(Sale.sold_price)).join(Sale, Sale.employee_id == Employee.id).group_by(Employee.id).all())
-
-    for first, last, total in resault:
-        print(f"{first} {last} --> Total sales: {total}")
-
-    session.close()
-
-def employee_profit(employee_id):
-    session = Session()
-    resault = (session.query(Employee.first_name, Employee.last_name, func.sum(Sale.sold_price - Car.cost_price)).join(Sale, Sale.employee_id == Employee.id).join(Car, Car.id == Sale.car_id).filter(Employee.id == employee_id).group_by(Employee.id).first())
-
-    for first, last, total in resault:
-        print(f"{first} {last} --> Total sales: {total}")
-        
-    session.close()
-
 

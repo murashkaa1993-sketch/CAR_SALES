@@ -1,84 +1,8 @@
 
 
 from CRUD import *
-def get_choice(value, min_val, max_val, count =3):
-    while count > 0:
-        print(f"You have {count} attempts to enter correct choice")
-        choice = get_int(value)
-        if min_val <= choice <=max_val:
-            return choice
-        count -= 1
-        print(f"Please enter the number between {min_val}-{max_val}")
-            
-    print ("Too many wrong attempts. Returning back")
-    return None
-
-def get_ID(search_func, name, count = 3):
-    while count > 0:
-        print(f"You have {count} attempts to enter correct ID")
-        id_choice = get_int("Enter  ID or press 0 to return back ")
-        if id_choice == 0:
-            break
-
-        if search_func(id_choice):
-            return id_choice
-        
-        count-=1
-        print(f"{name} with this ID not found")
-
-    print ("Too many wrong attempts. Returning back")        
-    return None
-def print_info_car():
-    print(""""Sort by:
-                1.manufacturer - press 1.
-                2.model -  press 2.
-                3.year - press 3.
-                4.cost_price - press 4.
-                5.selling_price - press 5.
-                6.status - press 6.
-                0.return to back - press 0
-                """)
-def no_empty(value):
-    while True:
-        new_value = input(value).strip()
-        if not new_value:
-            print("This field cannot be empty. Please enter the model car.")
-        else:
-            return new_value
-        
-def no_empty_str(value):
-    while True:
-        new_value = input(value).strip()
-        if any(i.isdigit() for i in new_value) or len(new_value) == 0:
-            print("Enter the correct first_name/ last_name/ position. They should not contain numbers and should not be blank.")
-        else:
-            return new_value
-    
-def get_email(mail):
-    while True:
-        check_mail = input(mail)
-        if len(check_mail) != 0 and check_mail.count("@") == 1 and  check_mail[0] != "@"  and check_mail[-1] != "@":
-           return check_mail
-        else:
-            print("Please enter a valid email address. It must contain only one @ character.")
-
-def get_phone(num):
-    while True:
-        
-        phone = input(num)
-        if len(phone) == 10 and phone.isdigit():
-            return phone 
-        else:
-            print("Phone number must have 10 digits")
-
-def get_int(value):
-    while True:
-        
-        try:
-            return int(input(value))
-        except:
-            print("Please enter a number.")
-
+from reports import *
+from additional_functions import *
 def main_menu():
 
     while True:
@@ -106,7 +30,6 @@ def main_menu():
         elif choice == 0:
             break
 
-
 def menu_employee():
     
     while True:
@@ -126,11 +49,15 @@ def menu_employee():
         
         if choice == 1:
             first_name = no_empty_str("Enter the first name: ")
-            last_name = no_empty_str("Enter the last name: ")
-            position = no_empty_str("Enter the position: ")
-            phone = get_phone("enter the phone number: ")
-            email = get_email("Enter the email: ")
-            add_employee(first_name, last_name, position, phone, email)
+            if first_name:
+                last_name = no_empty_str("Enter the last name: ")
+                if last_name:
+                    position = no_empty_str("Enter the position: ")
+                    if position:    
+                        phone = get_phone("enter the phone number: ")
+                        if phone:
+                            email = get_email("Enter the email: ")
+                            add_employee(first_name, last_name, position, phone, email)
                         
         elif choice == 2:
             all_employees()
@@ -172,10 +99,7 @@ def menu_employee():
                 print("Employee deleted successfully") 
         elif choice == 0:
             break
-            
-
-            
-        
+               
 def menu_cars():
     while True:
         print("""
@@ -184,11 +108,9 @@ def menu_cars():
     2. Show all
     3. Update
     4. Delete
-    5. Sort asc
-    6. Sort desc
     0. Back
     """)
-        choice = get_choice("Make yuor choice: ", 0, 6)
+        choice = get_choice("Make yuor choice: ", 0, 4)
         if choice is None:
             break
         
@@ -197,11 +119,15 @@ def menu_cars():
             break
         elif choice == 1:
             manufacturer = no_empty_str("Enter the manufacturer: ")
-            model = no_empty("Enter the model: ")
-            year = get_int("Enter the year: ")
-            cost_price = get_int("Enter the cost_price: ")
-            selling_price = get_int("Enter the selling_price: ")
-            add_car(manufacturer, model, year, cost_price, selling_price)
+            if manufacturer: 
+                model = no_empty("Enter the model: ")
+                if model:    
+                    year = get_int("Enter the year: ")
+                    if year:
+                        cost_price = get_int("Enter the cost_price: ")
+                        if cost_price:
+                            selling_price = get_int("Enter the selling_price: ")
+                            add_car(manufacturer, model, year, cost_price, selling_price)
                 
         elif choice == 2:
             all_cars()
@@ -234,68 +160,146 @@ def menu_cars():
             if id_car:
                 delete_car(id_car)
                 print("Car deleted successfully") 
-        
-        elif choice == 5:
-            choice_list = ["manufacturer", "model", "year", "cost_price", "selling_price", "status"]
-            print_info_car()
-            colums_sorted = get_choice("Enter your choice: ",0, 6)
-            if colums_sorted is None or colums_sorted == 0:
-                break
-                
-            cars_sorted(choice_list[colums_sorted-1])
-                    
-        elif choice == 6:
-            choice_list = ["manufacturer", "model", "year", "cost_price", "selling_price", "status"]
-            print_info_car()
-            colums_sorted = get_choice("Enter your choice: ",0, 6)
-            if colums_sorted is None or colums_sorted == 0:
-                break
-                
-            cars_sorted_desc(choice_list[colums_sorted-1])
-
 
 def menu_sale():
     print("===== NEW SALE =====")
     while True:
         id_empl = get_ID(search_employee_ID, "Employee")
-        id_car = get_ID(search_car_ID, "Car")
-        soldprice = get_int("Enter sold price: ")
-
-        if id_empl and id_car:
-
-            add_sale(id_empl, id_car, soldprice)
-            print("Sale successfully")
+        if id_empl:
+            id_car = get_ID(search_car_ID, "Car")
+            if id_car:
+                soldprice = get_int("Enter sold price: ")
+                add_sale(id_empl, id_car, soldprice)
+                print("Sale successfully")
         
-        choise = get_choice("""Would you like to make another sale?
-                         1. Yes - press 1.
-                         2. No  - press 2.""",1 ,2)
-        if choise is None or choise == 2:
-            break
-        elif choise == 1:
-            continue
-
+                choise = get_choice("""Would you like to make another sale?
+                                1. Yes - press 1.
+                                2. No  - press 2.""",1 ,2)
+                if choise is None or choise == 2:
+                    break
+                elif choise == 1:
+                    continue
+        break
 
 def menu_reports():
     while True:
         print("""
 ======= REPORTS ======
-1. Totat sale for each employee
-2. Profit per ymployee
-.
-.
-.
+1. All Employee
+2. All Car
+3. All Sales
+4. Amount all sales
+5. Amount all sales for day
+6. Amount all sales for period
+7. Amount sales for each employees
+8. Amount sales one employee
+9. Best auto sale for period
+10. Best Employee for period
+11. Amount total profit
 0. Back
 """)
-        choice = get_int("Make yuor choice: ")
+        choice = get_choice("Make yuor choice: ", 0, 11)
+        if choice is None or choice == 0:
+            break
+
         if choice == 1:
-            employee_total_sales()
+            result = report_all_employee()
+            if result:
+                for i in result:
+                    print(i)
+                save_yes_or_no("info_employee.json", result)
 
         elif choice == 2:
-            id_empl = get_int("Enter employee id")
-            employee_profit(id_empl)
+            result = report_all_car()
+            if result:
+                for i in result:
+                    print(i)
+                save_yes_or_no("info_cars.json", result)
 
-        elif choice == 0:
-            break
+        elif choice == 3:
+            result = report_all_sales()
+            if result:
+                for i in result:
+                    print(i)
+        
+                save_yes_or_no("info_sales.json", result)
+
+        elif choice == 4:
+            result = report_suma_all_sales()
+            if result:
+                print(f"Amound Sales = {result}")
+            
+                save_yes_or_no("All_suma_sales.json", {"Amound sales" : result})
+
+        elif choice == 5:
+            target_date = input_date("Enter the date: day-month-year " )
+            result = report_suma_all_sales_for_data(target_date)
+            if result:
+                print(f"Total sale for {target_date} = {result}")
+        
+                save_yes_or_no("Suma_sales_for_day.json", {"Total" :result})
+
+        elif choice == 6:
+            start_date = input_date("Enter the start date (dd-mm-yyyy): ")
+            end_date = input_date("Enter the end date (dd-mm-yyyy): ")
+            result = report_suma_all_sales_for_period(start_date, end_date)
+            
+            if result:
+                print(f"Total sales for periof {start_date} - {end_date} = {result}")
+        
+                save_yes_or_no("Suma_sales_for_period.json", {"Total" :result})
+
+        elif choice == 7:
+            result = report_suma_sale_for_each_emp()
+            if result:
+                for i in result:
+                    print(i)
+        
+                save_yes_or_no("sale_each_employee.json", result)
+
+        elif choice == 8:
+            emp_ID = int(input("Enter employee ID: "))
+            result = report_suma_sale_one_employee(emp_ID)
+
+            if result:
+                print(f"Total sale employee ID:{emp_ID} = {result}")
+        
+                save_yes_or_no("sale_one_employee.json", {emp_ID :result})
+
+        elif choice == 9:
+            start_date = input_date("Enter the start date (dd-mm-yyyy): ")
+            end_date = input_date("Enter the end date (dd-mm-yyyy): ")
+            result = report_better_auto_sale(start_date, end_date)
+
+            if result:
+                print(f"Best selling model: {result[0]}")
+                print(f"Total sales: {result[1]}")
+        
+                save_yes_or_no("best_car_sale.json",{
+                "Model" : result[0],
+                "Total sale" : result[1]})
+
+        elif choice == 10:
+            start_date = input_date("Enter the start date (dd-mm-yyyy): ")
+            end_date = input_date("Enter the end date (dd-mm-yyyy): ")
+            result = report_best_employee(start_date, end_date)
+
+            if result:
+                print(f"Best selling model: {result[0]}")
+                print(f"Total sales: {result[1]}")
+        
+                save_yes_or_no("best_employee_sale.json",{
+                "Employee" : result[0],
+                "Total sale" : result[1]})
+        elif choice == 11:
+            result = report_total_profit()
+            if result:
+                print(f"Total profit: {result}")
+        
+                save_yes_or_no("Total_profit.json",{
+                "Total profit" : result})
+
+
 
 
 
