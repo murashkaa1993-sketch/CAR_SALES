@@ -1,5 +1,6 @@
 from CRUD import *
 
+# Звіт по всіх співробітниках
 def report_all_employee():
     session = Session()
     try:
@@ -22,7 +23,7 @@ def report_all_employee():
     finally:
         session.close()
 
-
+# Звіт по всіх машинах
 def report_all_car():
     
     session = Session()
@@ -47,6 +48,7 @@ def report_all_car():
     finally:
         session.close()
 
+# Звіт по всіх продажах
 def report_all_sales():
     session = Session()
     try:
@@ -69,7 +71,7 @@ def report_all_sales():
         session.close()
 
 
-
+# Звіт загальної суми продажів за весь період
 def report_suma_all_sales():
     session = Session()
     try:
@@ -85,7 +87,7 @@ def report_suma_all_sales():
     finally:
         session.close()
 
-
+# Звіт загальної суми продажів за вибраний день
 def report_suma_all_sales_for_data(target_data: date):
     session = Session()
     try:
@@ -101,7 +103,7 @@ def report_suma_all_sales_for_data(target_data: date):
     finally:
         session.close()
 
-
+# Звіт загальної суми продажів за вибраний період
 def report_suma_all_sales_for_period(start_date: date, end_date: date):
     session = Session()
     try:
@@ -117,6 +119,7 @@ def report_suma_all_sales_for_period(start_date: date, end_date: date):
     finally:
         session.close()
 
+# Звіт загальної сума продажів всіх працівників
 def report_suma_sale_for_each_emp():
     session = Session()
     try:
@@ -140,6 +143,7 @@ def report_suma_sale_for_each_emp():
     finally:
         session.close()
 
+# Звіт загальної сумм продажу одного працівника 
 def report_suma_sale_one_employee(id_employee):
     session = Session()
     try:
@@ -161,7 +165,7 @@ def report_suma_sale_one_employee(id_employee):
     finally:
         session.close()
 
-
+# Звіт по найбільш проданому авто за вибраний період
 def report_better_auto_sale(start_date: date, end_date: date):
     session = Session()
     try:
@@ -191,7 +195,7 @@ def report_better_auto_sale(start_date: date, end_date: date):
         session.close()
 
 
-
+# Звіт по найкращому працівнику за вартістю продажів
 def report_best_employee(start_date: date, end_date: date):
     session = Session()
     try:
@@ -217,7 +221,7 @@ def report_best_employee(start_date: date, end_date: date):
     finally:
         session.close()
 
-
+# Звіт по загальному прибутку за весь час
 def report_total_profit():
     session = Session()
     try:

@@ -1,8 +1,14 @@
 
-
+# Імпортуємо CRUD-операції(add, show, update, delete)
 from CRUD import *
+# Імпортуємл функції для створення звітів 
 from reports import *
+# Імпортуємо допоміжні функції для кращої реалізації коду
 from additional_functions import *
+
+
+# Головне меню програми
+# Дає можливість вибору для переходу в наступні розділи
 def main_menu():
 
     while True:
@@ -30,6 +36,9 @@ def main_menu():
         elif choice == 0:
             break
 
+
+# Головне меню співробітників
+# Дає можливіть: додавати, переглядати, оновлювати та видаляти інформацію про працівників
 def menu_employee():
     
     while True:
@@ -66,7 +75,7 @@ def menu_employee():
                 id_empl = get_ID(search_employee_ID, "Employee")
                 
                 if id_empl:
-
+                    # Створюємо список полів в яких можна оновити інформацію
                     choice_list = ["first_name", "last_name", "position", "phone", "email"]
                     choice_up = get_choice("""What do you want to update(please enter one of the options below
                         1.first_name - press 1.
@@ -87,7 +96,7 @@ def menu_employee():
                             new_value = get_email("Enter new value")
                         else: 
                             new_value = no_empty_str("Enter new value")
-
+                        # Передача нового значення через kwargs
                         update_employee(id_empl, **{choice_list[choice_up-1]: new_value})
                         print("Updated successfully")
                         break
@@ -99,7 +108,9 @@ def menu_employee():
                 print("Employee deleted successfully") 
         elif choice == 0:
             break
-               
+
+# Головне меню Автомобілів
+# Дає можливіть: додавати, переглядати, оновлювати та видаляти інформацію про авто
 def menu_cars():
     while True:
         print("""
@@ -134,6 +145,7 @@ def menu_cars():
         elif choice == 3:
                 id_car = get_ID(search_car_ID, "Car")
                 if id_car:
+                    # Створюємо список полів в яких можна оновити інформацію
                     choice_list = ["manufacturer", "model", "year", "cost_price", "selling_price"]
                     choice_up = get_choice("""What do you want to update(please enter one of the options below
                         1.manufacturer - press 1.
@@ -151,7 +163,7 @@ def menu_cars():
                         new_value = no_empty("Enter new value")
                     elif choice_up in (3,4,5):
                         new_value = get_int("Enter new value")
-
+                    # Передача нового значення через kwargs
                     update_car(id_car, **{choice_list[choice_up-1] : new_value})
                     print("Updated successfully")
                         
@@ -161,6 +173,7 @@ def menu_cars():
                 delete_car(id_car)
                 print("Car deleted successfully") 
 
+# Меню для створення нових продажів та можливістю повторити цю операцію
 def menu_sale():
     print("===== NEW SALE =====")
     while True:
@@ -181,6 +194,7 @@ def menu_sale():
                     continue
         break
 
+# Головне меню звітів. Дає можливіть перегрянути статистику та зберегти її у файл
 def menu_reports():
     while True:
         print("""

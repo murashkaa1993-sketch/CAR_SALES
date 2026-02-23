@@ -1,6 +1,10 @@
 
+# Описуємл таблиці Employee, Car, Sale
+
 from database import Base
+# Імпорт необхідних компонентів для роботи з таблицями
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date
+# імпортуємо relationship для того щоб таблиці могли взаємодіяти між собою
 from sqlalchemy.orm import relationship
 
 class Employee(Base):
@@ -21,6 +25,7 @@ class Car(Base):
     year = Column(Integer)
     cost_price = Column(Float)
     selling_price = Column(Float)
+    # Вказуємо значення за замовчуванням available
     status = Column(String, default="available")
 
 
@@ -34,5 +39,6 @@ class Sale(Base):
     sale_date = Column(Date)
     sold_price = Column(Float)
 
+    # Підключаємо таблиці (Car and Employee) для взаємодії між ними
     employee = relationship("Employee")
     car = relationship("Car")

@@ -3,6 +3,9 @@ import json
 from pathlib import Path
 
 
+# У більшості функцій є count для підрахунку введення некоректної інформації, 
+# щоб захистити себе від безкінечного циклу
+# Функція для перевірка на введення коректної дати
 def input_date(prompt, count = 3):
     while count > 0:
         print(f"You have {count} attempts to enter correct choice")
@@ -14,6 +17,7 @@ def input_date(prompt, count = 3):
             count-=1
             print("Invalid date format. Please enter in dd-mm-yyyy format.")
 
+# Функція для зберігання звітів. Даємо вибір користувачеві чи бажає він його зберегти
 def save_yes_or_no(name_file, resault):
     save = get_choice("""\n Do you want to save the data to a file? \n" \
                 "1. Yes - press 1\n" \
@@ -25,6 +29,7 @@ def save_yes_or_no(name_file, resault):
     elif save == 2:
         print("Report not saved.")
 
+# Фкнкція для запису звітів у форматі JSON
 def write_report(value, result):
     # Шлях до папки з проектом
     BASE_DIR = Path(__file__).resolve().parent
@@ -33,6 +38,7 @@ def write_report(value, result):
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=4,ensure_ascii=False)
 
+# Функція для безпечного введення числа згідно вказаного діапазону. 
 def get_choice(value, min_val, max_val, count =3):
     while count > 0:
         print(f"You have {count} attempts to enter correct choice")
@@ -45,6 +51,7 @@ def get_choice(value, min_val, max_val, count =3):
     print ("Too many wrong attempts. Returning back")
     return None
 
+# Функція для безпечного пошуку (Employee or Car) за ID. 
 def get_ID(search_func, name, count = 3):
     while count > 0:
         print(f"You have {count} attempts to enter correct ID")
@@ -60,6 +67,7 @@ def get_ID(search_func, name, count = 3):
 
     print ("Too many wrong attempts. Returning back")        
     return None
+
 def print_info_car():
     print(""""Sort by:
                 1.manufacturer - press 1.
@@ -70,6 +78,8 @@ def print_info_car():
                 6.status - press 6.
                 0.return to back - press 0
                 """)
+    
+# Функція для безпечного запису (відхиляє пусті значення) 
 def no_empty(value, count = 3):
     while count > 0:
         new_value = input(value).strip()
@@ -80,6 +90,7 @@ def no_empty(value, count = 3):
             return new_value
     print ("Too many wrong attempts. Returning back")
         
+# Функція для безпечного запису (відхиляє пусті значення та значення в яких містяться цифри)
 def no_empty_str(value, count = 3):
     while count > 0:
         print(f"You have {count} attempts to enter correct information")
@@ -91,6 +102,7 @@ def no_empty_str(value, count = 3):
             return new_value
     print ("Too many wrong attempts. Returning back") 
     
+# Функція для безпечного запису електронної адреси
 def get_email(mail, count = 3):
     while count > 0:
         print(f"You have {count} attempts to enter correct information")
@@ -102,6 +114,7 @@ def get_email(mail, count = 3):
             print("Please enter a valid email address. It must contain only one @ character.")
     print ("Too many wrong attempts. Returning back") 
 
+# Функція для безпечного запису мобільного телефону
 def get_phone(num, count = 3):
     while count > 0:
         print(f"You have {count} attempts to enter correct information")
@@ -113,6 +126,8 @@ def get_phone(num, count = 3):
             print("Phone number must have 10 digits")
     print ("Too many wrong attempts. Returning back") 
 
+
+# Функція для перевірки чи значення є числом
 def get_int(value, count = 3):
 
     while count > 0:

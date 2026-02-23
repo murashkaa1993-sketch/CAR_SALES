@@ -4,7 +4,7 @@ from datetime import date
 from database import Session
 from tables import Employee, Car, Sale
 
-
+# Додавання нового працівника до БД
 def add_employee(first_name, last_name, position, phone, email):
     session = Session() 
     new_employee = Employee(
@@ -19,6 +19,7 @@ def add_employee(first_name, last_name, position, phone, email):
     session.close()
     print("Employee added successfully!")
 
+#Перегляд всіх співробітників
 def all_employees():
     session = Session()
     employees = session.query(Employee).all()
@@ -38,6 +39,8 @@ def all_employees():
             """)
     session.close()
 
+# Пошук співробітника(інформацію якого бажаємо змінити) за ID 
+# **kwargs - використовуємо для гнучкості вибору зміни даних співробітника
 def update_employee(emp_id, **kwargs):
     session = Session()
     emp = session.query(Employee).get(emp_id)
@@ -45,7 +48,7 @@ def update_employee(emp_id, **kwargs):
         print("Employee not found")
         session.close()
         return
-
+    # Оновлення вибраного аргументу key на нове значення value
     for key, value in kwargs.items():
         setattr(emp, key, value)
         
@@ -53,6 +56,7 @@ def update_employee(emp_id, **kwargs):
     print("Information updated")
     session.close()
 
+# Видалення співробітника за ID 
 def delete_employee(emp_id):
     session = Session()
     emp = session.query(Employee).get(emp_id)
@@ -64,13 +68,14 @@ def delete_employee(emp_id):
         print("Employee not found")
     session.close()
 
+# Пошук співробітника за ID
 def search_employee_ID(emp_ID):
     session = Session()
     search = session.query(Employee).filter(Employee.id == emp_ID).first() is not None
     session.close()
     return search
 
-
+# Додавання нової машини до БД
 def add_car(manufacturer, model, year, cost_price, selling_price):
     session = Session() 
     new_car = Car(
@@ -85,6 +90,7 @@ def add_car(manufacturer, model, year, cost_price, selling_price):
     session.close()
     print("Car added successfully!")
 
+# Перегляд всіх машин
 def all_cars():
     session = Session()
     cars = session.query(Car).all()
@@ -105,6 +111,8 @@ def all_cars():
             """)
     session.close()
 
+# Пошук машини(інформацію якої бажате змінити) за ID 
+# **kwargs - використовуємо для гнучкості вибору зміни даних машини
 def update_car(car_id, **kwargs):
     session = Session()
     car = session.query(Car).get(car_id)
@@ -113,6 +121,7 @@ def update_car(car_id, **kwargs):
         session.close()
         return
 
+    # Оновлення вибраного аргументу key на нове значення value
     for key, value in kwargs.items():
         setattr(car, key, value)
         
@@ -120,6 +129,7 @@ def update_car(car_id, **kwargs):
     print("Information updated")
     session.close() 
 
+# Видалення машини за ID
 def delete_car(car_id):
     session = Session()
     car = session.query(Car).get(car_id)
@@ -131,25 +141,31 @@ def delete_car(car_id):
         print("Car not found")
     session.close()
 
+# Пошук машини за ID
 def search_car_ID(car_ID):
     session = Session()
     search = session.query(Car).filter(Car.id == car_ID).first() is not None
     session.close()
     return search
 
+# Створення продажу машини
 def add_sale(employee_id, car_id, sold_price):
     session = Session()
     employee = session.query(Employee).get(employee_id)
+    # Перевіряємо чи є співробітник з таким ID
     if not employee:
         print("Employee not found")
         session.close()
         return
     car = session.query(Car).get(car_id)
+
+    # Перевіряємо чи є машина з таким ID
     if not car:
         print("Car not found")
         session.close()
         return
     
+    # Перевіряємо чи машина ще не продана
     if car.status != "available":
         print("Car is already sold")
         session.close()
@@ -163,6 +179,7 @@ def add_sale(employee_id, car_id, sold_price):
     )
     session.add(new_sale)
 
+    # Зміна статусу машини в разі успішного продажу
     car.status = "sold"
 
     session.commit()
