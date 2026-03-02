@@ -60,7 +60,7 @@ def report_all_sales():
                 "id": sale.id,
                 "employee_id": sale.employee_id,
                 "car_id": sale.car_id,
-                "sale_date": sale.sale_date,
+                "sale_date": sale.sale_date.isoformat(),
                 "sold_price": sale.sold_price
             })
         return result

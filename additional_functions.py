@@ -11,11 +11,11 @@ def input_date(prompt, count = 3):
         print(f"You have {count} attempts to enter correct choice")
         date_str = input(prompt)
         try:
-            valid_date = datetime.strptime(date_str, "%d-%m-%Y").date()
+            valid_date = datetime.strptime(date_str, "%Y-%m-%d").date()
             return valid_date
         except ValueError:
             count-=1
-            print("Invalid date format. Please enter in dd-mm-yyyy format.")
+            print("Invalid date format. Please enter in yyyy-mm-dd format.")
 
 # Функція для зберігання звітів. Даємо вибір користувачеві чи бажає він його зберегти
 def save_yes_or_no(name_file, resault):
@@ -43,13 +43,13 @@ def get_choice(value, min_val, max_val, count =3):
     while count > 0:
         print(f"You have {count} attempts to enter correct choice")
         choice = get_int(value)
-        if min_val <= choice <=max_val:
+        if choice == None:
+            count -= 1
+        elif min_val <= choice <=max_val:
             return choice
-        count -= 1
         print(f"Please enter the number between {min_val}-{max_val}")
             
     print ("Too many wrong attempts. Returning back")
-    return None
 
 # Функція для безпечного пошуку (Employee or Car) за ID. 
 def get_ID(search_func, name, count = 3):
@@ -66,7 +66,6 @@ def get_ID(search_func, name, count = 3):
         print(f"{name} with this ID not found")
 
     print ("Too many wrong attempts. Returning back")        
-    return None
 
 def print_info_car():
     print(""""Sort by:
@@ -128,11 +127,23 @@ def get_phone(num, count = 3):
 
 
 # Функція для перевірки чи значення є числом
-def get_int(value, count = 3):
+def get_int(value):
 
+    try:
+        return int(input(value))
+    except:
+        return None
+
+def positiv_number( value, count = 3):
     while count > 0:
         try:
-            return int(input(value))
+            numb = float(input(value))
+            if numb > 0:
+                return numb
+            else:
+                print("Please enter a positive number.")
         except:
-            count -= 1
-            print("Please enter a number.")
+            print("Invalid input. Please enter a number.")
+        count -= 1
+    print ("Too many wrong attempts. Returning back")
+    

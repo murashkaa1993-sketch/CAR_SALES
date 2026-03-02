@@ -6,6 +6,8 @@ from reports import *
 # Імпортуємо допоміжні функції для кращої реалізації коду
 from additional_functions import *
 
+#Додаємо нові таблиці які ще не існують в базі
+from database import create_tables, check_connection
 
 # Головне меню програми
 # Дає можливість вибору для переходу в наступні розділи
@@ -96,10 +98,14 @@ def menu_employee():
                             new_value = get_email("Enter new value")
                         else: 
                             new_value = no_empty_str("Enter new value")
-                        # Передача нового значення через kwargs
-                        update_employee(id_empl, **{choice_list[choice_up-1]: new_value})
-                        print("Updated successfully")
-                        break
+                        
+                        
+                        if new_value == None:
+                            print("Сhange rejected due to incorrect information entered")
+                        else:
+                            # Передача нового значення через kwargs
+                            update_employee(id_empl, **{choice_list[choice_up-1]: new_value})
+                            print("Information updated")
 
         elif choice == 4:
             id_empl = get_ID(search_employee_ID, "Employee")
@@ -133,11 +139,11 @@ def menu_cars():
             if manufacturer: 
                 model = no_empty("Enter the model: ")
                 if model:    
-                    year = get_int("Enter the year: ")
+                    year = positiv_number("Enter the year: ")
                     if year:
-                        cost_price = get_int("Enter the cost_price: ")
+                        cost_price = positiv_number("Enter the cost_price: ")
                         if cost_price:
-                            selling_price = get_int("Enter the selling_price: ")
+                            selling_price = positiv_number("Enter the selling_price: ")
                             add_car(manufacturer, model, year, cost_price, selling_price)
                 
         elif choice == 2:
@@ -162,10 +168,15 @@ def menu_cars():
                     elif choice_up == 2:
                         new_value = no_empty("Enter new value")
                     elif choice_up in (3,4,5):
-                        new_value = get_int("Enter new value")
-                    # Передача нового значення через kwargs
-                    update_car(id_car, **{choice_list[choice_up-1] : new_value})
-                    print("Updated successfully")
+                        new_value = positiv_number("Enter new value")
+
+                    if new_value == None:
+                        print("Сhange rejected due to incorrect information entered")
+                    else:
+                        # Передача нового значення через kwargs
+                        update_car(id_car, **{choice_list[choice_up-1] : new_value})
+                        print("Information updated")
+                    
                         
         elif choice == 4:
             id_car = get_ID(search_car_ID, "Car")
@@ -175,24 +186,86 @@ def menu_cars():
 
 # Меню для створення нових продажів та можливістю повторити цю операцію
 def menu_sale():
-    print("===== NEW SALE =====")
     while True:
-        id_empl = get_ID(search_employee_ID, "Employee")
-        if id_empl:
-            id_car = get_ID(search_car_ID, "Car")
-            if id_car:
-                soldprice = get_int("Enter sold price: ")
-                add_sale(id_empl, id_car, soldprice)
-                print("Sale successfully")
+        print("""
+    ======= SALE =======
+    1. Add sale
+    2. Show all sales
+    3. Show one sale
+    4. Update
+    5. Delete
+    0. Back
+    """)
+    
+        choice = get_choice("Make yuor choice: ", 0, 5)
+        if choice is None:
+            break
         
-                choise = get_choice("""Would you like to make another sale?
-                                1. Yes - press 1.
-                                2. No  - press 2.""",1 ,2)
-                if choise is None or choise == 2:
-                    break
-                elif choise == 1:
-                    continue
-        break
+
+        if choice == 0:
+            break
+        elif choice == 1:
+            while True:
+                id_empl = get_ID(search_employee_ID, "Employee")
+                if id_empl:
+                    id_car = get_ID(search_car_ID, "Car")
+                    if id_car:
+                        soldprice = positiv_number("Enter sold price: ")
+                        add_sale(id_empl, id_car, soldprice)
+                
+                        choise = get_choice("""Would you like to make another sale?
+                                        1. Yes - press 1.
+                                        2. No  - press 2.""",1 ,2)
+                        if choise is None or choise == 2:
+                            break
+                        elif choise == 1:
+                            continue
+                break
+                
+        elif choice == 2:
+            all_sales()
+
+        elif choice == 3:
+            id_sale = get_ID(search_sale_ID, "Sale")
+            if id_sale is None:
+                break
+            one_sale(id_sale)
+        elif choice == 4:
+                id_sale = get_ID(search_sale_ID, "Sale")
+                if id_sale:
+                    # Створюємо список полів в яких можна оновити інформацію
+                    choice_list = ["employee_id", "car_id", "sale_date", "sold_price"]
+                    choice_up = get_choice("""What do you want to update(please enter one of the options below
+                        1.employee_id - press 1.
+                        2.car_id -  press 2.
+                        3.sale_date - press 3.
+                        4.sold_price - press 4.
+                        5. To return back - pres 5.
+                        """, 1, 5)
+                    if choice_up is None or choice_up == 5:
+                        break
+                    if choice_up == 1:
+                        new_value = get_ID(search_employee_ID, "Employee")
+                    elif choice_up == 2:
+                        new_value = get_ID(search_car_ID, "Car")
+                    elif choice_up == 3:
+                        new_value = input_date("Enter the date: year-month-day " )
+                    elif choice_up == 4:
+                        new_value = positiv_number("Enter new sold price: ")
+                    # Передача нового значення через kwargs
+                    
+                    if new_value == None:
+                        print("Сhange rejected due to incorrect information entered")
+                    else:
+                        update_sale(id_sale, **{choice_list[choice_up-1] : new_value})
+                        print("Information updated")
+                    
+                        
+        elif choice == 5:
+            id_sale = get_ID(search_sale_ID, "Sale")
+            if id_sale:
+                delete_sale(id_sale)
+                print("Sale deleted successfully") 
 
 # Головне меню звітів. Дає можливіть перегрянути статистику та зберегти її у файл
 def menu_reports():
@@ -246,7 +319,7 @@ def menu_reports():
                 save_yes_or_no("All_suma_sales.json", {"Amound sales" : result})
 
         elif choice == 5:
-            target_date = input_date("Enter the date: day-month-year " )
+            target_date = input_date("Enter the date: year-month-day " )
             result = report_suma_all_sales_for_data(target_date)
             if result:
                 print(f"Total sale for {target_date} = {result}")
@@ -254,8 +327,8 @@ def menu_reports():
                 save_yes_or_no("Suma_sales_for_day.json", {"Total" :result})
 
         elif choice == 6:
-            start_date = input_date("Enter the start date (dd-mm-yyyy): ")
-            end_date = input_date("Enter the end date (dd-mm-yyyy): ")
+            start_date = input_date("Enter the start date (yyyy-mm-dd): ")
+            end_date = input_date("Enter the end date (yyyy-mm-dd): ")
             result = report_suma_all_sales_for_period(start_date, end_date)
             
             if result:
@@ -281,8 +354,8 @@ def menu_reports():
                 save_yes_or_no("sale_one_employee.json", {emp_ID :result})
 
         elif choice == 9:
-            start_date = input_date("Enter the start date (dd-mm-yyyy): ")
-            end_date = input_date("Enter the end date (dd-mm-yyyy): ")
+            start_date = input_date("Enter the start date (yyyy-mm-dd): ")
+            end_date = input_date("Enter the end date (yyyy-mm-dd): ")
             result = report_better_auto_sale(start_date, end_date)
 
             if result:
@@ -294,8 +367,8 @@ def menu_reports():
                 "Total sale" : result[1]})
 
         elif choice == 10:
-            start_date = input_date("Enter the start date (dd-mm-yyyy): ")
-            end_date = input_date("Enter the end date (dd-mm-yyyy): ")
+            start_date = input_date("Enter the start date (yyyy-mm-dd): ")
+            end_date = input_date("Enter the end date (yyyy-mm-dd): ")
             result = report_best_employee(start_date, end_date)
 
             if result:
@@ -321,4 +394,6 @@ def menu_reports():
 
 
 if __name__ == "__main__":
+    check_connection()
+    create_tables()
     main_menu()

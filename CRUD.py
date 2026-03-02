@@ -53,7 +53,6 @@ def update_employee(emp_id, **kwargs):
         setattr(emp, key, value)
         
     session.commit()
-    print("Information updated")
     session.close()
 
 # Видалення співробітника за ID 
@@ -126,7 +125,6 @@ def update_car(car_id, **kwargs):
         setattr(car, key, value)
         
     session.commit()
-    print("Information updated")
     session.close() 
 
 # Видалення машини за ID
@@ -186,3 +184,72 @@ def add_sale(employee_id, car_id, sold_price):
     print(f"Sale recorded. Profit: {sold_price - car.cost_price}")
     session.close()
 
+
+def all_sales():
+    session = Session()
+    sales = session.query(Sale).all()
+    if not sales:
+        print("Sales not found")
+        session.close()
+        return
+
+    for sale in sales:
+            print(f"""
+            ID: {sale.id}
+            Employee_id: {sale.employee_id} 
+            Car_id: {sale.car_id} 
+            Sale_date: {sale.sale_date.isoformat()} 
+            Sold_price: {sale.sold_price}
+            """)
+    session.close()
+
+
+def one_sale(sale_id):
+    session = Session()
+    sales = session.query(Sale).get(sale_id)
+    if not sales:
+        print("Sale not found")
+        session.close()
+        return
+    else:
+        
+        print(f"""
+        ID: {sales.id}
+        Employee_id: {sales.employee_id} 
+        Car_id: {sales.car_id} 
+        Sale_date: {sales.sale_date.isoformat()} 
+        Sold_price: {sales.sold_price}
+        """)
+        session.close()
+
+def update_sale(sale_id, **kwargs):
+    session = Session()
+    sales = session.query(Sale).get(sale_id)
+    if not sales:
+        print("Sale not found")
+        session.close()
+        return
+
+    # Оновлення вибраного аргументу key на нове значення value
+    for key, value in kwargs.items():
+        setattr(sales, key, value)
+        
+    session.commit()
+    session.close() 
+
+def delete_sale(sale_id):
+    session = Session()
+    sales = session.query(Sale).get(sale_id)
+    if sales:
+        session.delete(sales)
+        session.commit()
+        print("Sale Deleted")
+    else:
+        print("Sale not found")
+    session.close()
+
+def search_sale_ID(sale_ID):
+    session = Session()
+    search = session.query(Sale).filter(Sale.id == sale_ID).first() is not None
+    session.close()
+    return search
