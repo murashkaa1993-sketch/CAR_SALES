@@ -198,7 +198,7 @@ def all_sales():
             ID: {sale.id}
             Employee_id: {sale.employee_id} 
             Car_id: {sale.car_id} 
-            Sale_date: {sale.sale_date.isoformat()} 
+            Sale_date: {sale.sale_date.isoformat() if sale.sale_date else "N/A"} 
             Sold_price: {sale.sold_price}
             """)
     session.close()
@@ -217,7 +217,7 @@ def one_sale(sale_id):
         ID: {sales.id}
         Employee_id: {sales.employee_id} 
         Car_id: {sales.car_id} 
-        Sale_date: {sales.sale_date.isoformat()} 
+        Sale_date: {sales.sale_date.isoformat() if sales.sale_date else "N/A"} 
         Sold_price: {sales.sold_price}
         """)
         session.close()

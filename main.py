@@ -283,9 +283,10 @@ def menu_reports():
 9. Best auto sale for period
 10. Best Employee for period
 11. Amount total profit
+12. Total profit for period
 0. Back
 """)
-        choice = get_choice("Make yuor choice: ", 0, 11)
+        choice = get_choice("Make yuor choice: ", 0, 12)
         if choice is None or choice == 0:
             break
 
@@ -327,9 +328,12 @@ def menu_reports():
                 save_yes_or_no("Suma_sales_for_day.json", {"Total" :result})
 
         elif choice == 6:
+            result = None
             start_date = input_date("Enter the start date (yyyy-mm-dd): ")
-            end_date = input_date("Enter the end date (yyyy-mm-dd): ")
-            result = report_suma_all_sales_for_period(start_date, end_date)
+            if start_date:
+                end_date = input_date("Enter the end date (yyyy-mm-dd): ")
+                if end_date:    
+                    result = report_suma_all_sales_for_period(start_date, end_date)
             
             if result:
                 print(f"Total sales for periof {start_date} - {end_date} = {result}")
@@ -345,7 +349,7 @@ def menu_reports():
                 save_yes_or_no("sale_each_employee.json", result)
 
         elif choice == 8:
-            emp_ID = int(input("Enter employee ID: "))
+            emp_ID = get_int("Enter employee ID: ")
             result = report_suma_sale_one_employee(emp_ID)
 
             if result:
@@ -354,9 +358,12 @@ def menu_reports():
                 save_yes_or_no("sale_one_employee.json", {emp_ID :result})
 
         elif choice == 9:
+            result = None
             start_date = input_date("Enter the start date (yyyy-mm-dd): ")
-            end_date = input_date("Enter the end date (yyyy-mm-dd): ")
-            result = report_better_auto_sale(start_date, end_date)
+            if start_date:
+                end_date = input_date("Enter the end date (yyyy-mm-dd): ")
+                if end_date:    
+                    result = report_better_auto_sale(start_date, end_date)
 
             if result:
                 print(f"Best selling model: {result[0]}")
@@ -367,9 +374,12 @@ def menu_reports():
                 "Total sale" : result[1]})
 
         elif choice == 10:
+            result = None
             start_date = input_date("Enter the start date (yyyy-mm-dd): ")
-            end_date = input_date("Enter the end date (yyyy-mm-dd): ")
-            result = report_best_employee(start_date, end_date)
+            if start_date:
+                end_date = input_date("Enter the end date (yyyy-mm-dd): ")
+                if end_date:    
+                    result = report_best_employee(start_date, end_date)
 
             if result:
                 print(f"Best selling model: {result[0]}")
@@ -385,6 +395,19 @@ def menu_reports():
         
                 save_yes_or_no("Total_profit.json",{
                 "Total profit" : result})
+        elif choice == 12:
+            result = None
+            start_date = input_date("Enter the start date (yyyy-mm-dd): ")
+            if start_date:
+                end_date = input_date("Enter the end date (yyyy-mm-dd): ")
+                if end_date:    
+                    result = report_total_profit_for_period(start_date, end_date)
+            
+            if result:
+                print(f"Total profit for period {start_date} - {end_date}: {result}")
+        
+                save_yes_or_no("Total_profit_for period.json",{
+                f"Total profit for period {start_date}-{end_date}" : result})
 
 
 

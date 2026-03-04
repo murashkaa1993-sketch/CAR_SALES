@@ -9,29 +9,29 @@ CREATE DATABASE CarSalesAccounting;
 -- Таблиця працівників
 CREATE TABLE employee (
     id SERIAL PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    position VARCHAR(50),
-    phone VARCHAR(20),
-    email VARCHAR(50)
+    first_name VARCHAR NOT NULL,
+    last_name VARCHAR NOT NULL,
+    position VARCHAR,
+    phone VARCHAR,
+    email VARCHAR
 );
 
 -- Таблиця авто
-CREATE TABLE cars (
+CREATE TABLE car (
     id SERIAL PRIMARY KEY,
-    manufacturer VARCHAR(50),
-    model VARCHAR(50),
-    year INT,
+    manufacturer VARCHAR,
+    model VARCHAR,
+    year INTEGER,
     cost_price NUMERIC,
     selling_price NUMERIC,
-    status VARCHAR(20) DEFAULT 'available'
+    status VARCHAR DEFAULT 'available'
 );
 
 -- Таблиця продажів
-CREATE TABLE sales (
+CREATE TABLE sale (
     id SERIAL PRIMARY KEY,
-    employee_id INT REFERENCES employee(id),
-    car_id INT REFERENCES cars(id),
+    employee_id INTEGER REFERENCES employee(id),
+    car_id INTEGER REFERENCES car(id),
     sale_date DATE,
     sold_price NUMERIC
 );

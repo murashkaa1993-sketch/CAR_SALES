@@ -18,7 +18,7 @@ DB_PORT = os.getenv("DB_PORT")
 DB_NAME = os.getenv("DB_NAME")
 
 if not all([DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME]):
-    raise ValueError("Please check your .env file: missing DB connection parameters!")
+    raise ValueError("Please check your .env file: missing BD connection parameters!")
 
 DATABASE_URL = f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -31,6 +31,7 @@ Session = sessionmaker(bind=engine)
 # Базовий клас для створення таблиць
 Base = declarative_base()
 
+#Перевірка підключення до БД
 def check_connection():
     try:
         conn = engine.connect()

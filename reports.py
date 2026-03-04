@@ -60,7 +60,7 @@ def report_all_sales():
                 "id": sale.id,
                 "employee_id": sale.employee_id,
                 "car_id": sale.car_id,
-                "sale_date": sale.sale_date.isoformat(),
+                "sale_date": sale.sale_date.isoformat() if sale.sale_date else None,
                 "sold_price": sale.sold_price
             })
         return result
@@ -76,7 +76,7 @@ def report_suma_all_sales():
     session = Session()
     try:
         sales = session.query(Sale).all()
-        suma = sum(s.sold_price for s in sales)
+        suma = sum(s.sold_price or 0 for s in sales)
         if suma == 0:
             print("No sales")
         else:
@@ -92,7 +92,7 @@ def report_suma_all_sales_for_data(target_data: date):
     session = Session()
     try:
         sales = session.query(Sale).all()
-        suma = sum(s.sold_price for s in sales if target_data == s.sale_date)
+        suma = sum(s.sold_price or 0 for s in sales if target_data == s.sale_date)
         if suma == 0:
             print("No sales for this date")
         else:
@@ -108,7 +108,7 @@ def report_suma_all_sales_for_period(start_date: date, end_date: date):
     session = Session()
     try:
         sales = session.query(Sale).all()
-        suma = sum(s.sold_price for s in sales if start_date <= s.sale_date <= end_date)
+        suma = sum(s.sold_price or 0 for s in sales if s.sale_date and start_date <= s.sale_date <= end_date)
         if suma == 0:
             print("No sales for this date")
         else:
@@ -129,9 +129,9 @@ def report_suma_sale_for_each_emp():
         for sale in sales:
             emp_id = sale.employee_id
             if emp_id not in sales_each_emp:
-                sales_each_emp[emp_id] = sale.sold_price
+                sales_each_emp[emp_id] = sale.sold_price or 0
             else:
-                sales_each_emp[emp_id] += sale.sold_price
+                sales_each_emp[emp_id] += sale.sold_price or 0
 
 
         if not sales_each_emp:
@@ -154,7 +154,7 @@ def report_suma_sale_one_employee(id_employee):
         for sale in sales:
             emp_id = sale.employee_id
             if emp_id == id_employee:
-                total_sales += sale.sold_price
+                total_sales += sale.sold_price or 0
 
         if total_sales == 0:
             print("No sales")
@@ -177,13 +177,20 @@ def report_better_auto_sale(start_date: date, end_date: date):
         count_sale_each_auto = {}
 
         for sale in sales:
-            if start_date <= sale.sale_date <= end_date:
+            if sale.sale_date and start_date <= sale.sale_date <= end_date:
+                if not sale.car or not sale.car.model:
+                    continue    
+                
                 model = sale.car.model
 
                 if model not in count_sale_each_auto:
                     count_sale_each_auto[model] = 1
                 else:
                     count_sale_each_auto[model] += 1
+
+        if not count_sale_each_auto:
+            print("No sales for this period")
+            return
 
         best_model = max(count_sale_each_auto, key=count_sale_each_auto.get)
         best_count = count_sale_each_auto[best_model]
@@ -195,7 +202,7 @@ def report_better_auto_sale(start_date: date, end_date: date):
         session.close()
 
 
-# Звіт по найкращому працівнику за вартістю продажів
+# Звіт по найкращому працівнику за прибутком
 def report_best_employee(start_date: date, end_date: date):
     session = Session()
     try:
@@ -206,13 +213,21 @@ def report_best_employee(start_date: date, end_date: date):
         sales_each_emp = {}
         
         for sale in sales:
-            if start_date <= sale.sale_date <= end_date:
+            if sale.sale_date and start_date <= sale.sale_date <= end_date:
+                if not sale.employee:
+                    continue
+                
                 emp_id = f"{sale.employee.first_name} {sale.employee.last_name}"
+                
                 if emp_id not in sales_each_emp:
-                    sales_each_emp[emp_id] = sale.sold_price
+                    sales_each_emp[emp_id] = (sale.sold_price or 0) - (sale.car.cost_price or 0)
                 else:
-                    sales_each_emp[emp_id] += sale.sold_price
+                    sales_each_emp[emp_id] += (sale.sold_price or 0) - (sale.car.cost_price or 0)
 
+        if not sales_each_emp:
+            print("No sales for this period")
+            return
+        
         best_employee = max(sales_each_emp, key=sales_each_emp.get)
         best_sale = sales_each_emp[best_employee]
         return best_employee, best_sale
@@ -226,7 +241,7 @@ def report_total_profit():
     session = Session()
     try:
         sales = session.query(Sale).all()
-        suma_sp = sum(s.sold_price for s in sales)
+        suma_sp = sum(s.sold_price or 0 for s in sales)
         if suma_sp == 0:
             print("No sales")
             return
@@ -235,10 +250,30 @@ def report_total_profit():
         for sale in sales:
             cost_price = sale.car.cost_price
             sold_price = sale.sold_price
-            total_profit += (sold_price - cost_price)
+            total_profit += (sold_price or 0) - (cost_price or 0)
         return total_profit
     except Exception as e:
         print(f"Error calculating total sales: {e}")
 
     finally:
         session.close()
+
+# Звіт по загальному прибутку за період
+def report_total_profit_for_period(start_date: date, end_date: date):
+    session = Session()
+    try:
+        sales = session.query(Sale).all()
+        suma_p = sum(s.sold_price or 0 for s in sales if s.sale_date and start_date <= s.sale_date <= end_date)
+        if suma_p == 0:
+            print("No sales for this date")
+        else:
+            suma_cp = sum(s.car.cost_price or 0 for s in sales if s.sale_date and start_date <= s.sale_date <= end_date)
+            total_profit = suma_p - suma_cp
+            return total_profit
+    except Exception as e:
+        print(f"Error calculating total sales: {e}")
+
+    finally:
+        session.close()
+
+    

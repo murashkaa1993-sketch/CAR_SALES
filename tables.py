@@ -8,7 +8,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date
 from sqlalchemy.orm import relationship
 
 class Employee(Base):
-    __tablename__ = "employees"
+    __tablename__ = "employee"
     id = Column(Integer, primary_key=True)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
@@ -17,7 +17,7 @@ class Employee(Base):
     email = Column(String)
 
 class Car(Base):
-    __tablename__ = "cars"
+    __tablename__ = "car"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     manufacturer = Column(String)
@@ -31,11 +31,11 @@ class Car(Base):
 
 
 class Sale(Base):
-    __tablename__ = "sales"
+    __tablename__ = "sale"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    employee_id = Column(Integer, ForeignKey("employees.id"))
-    car_id = Column(Integer, ForeignKey("cars.id"))
+    employee_id = Column(Integer, ForeignKey("employee.id"))
+    car_id = Column(Integer, ForeignKey("car.id"))
     sale_date = Column(Date)
     sold_price = Column(Float)
 
