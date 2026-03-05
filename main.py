@@ -275,18 +275,17 @@ def menu_reports():
 1. All Employee
 2. All Car
 3. All Sales
-4. Amount all sales
-5. Amount all sales for day
-6. Amount all sales for period
-7. Amount sales for each employees
-8. Amount sales one employee
-9. Best auto sale for period
-10. Best Employee for period
-11. Amount total profit
-12. Total profit for period
+4. All sales for day
+5. All sales for period
+6. Amount sales for each employees
+7. Sales one employee
+8. Best auto sale for period
+9. Best Employee for period
+10. Amount total profit
+11. Total profit for period
 0. Back
 """)
-        choice = get_choice("Make yuor choice: ", 0, 12)
+        choice = get_choice("Make yuor choice: ", 0, 11)
         if choice is None or choice == 0:
             break
 
@@ -313,34 +312,27 @@ def menu_reports():
                 save_yes_or_no("info_sales.json", result)
 
         elif choice == 4:
-            result = report_suma_all_sales()
-            if result:
-                print(f"Amound Sales = {result}")
-            
-                save_yes_or_no("All_suma_sales.json", {"Amound sales" : result})
-
-        elif choice == 5:
             target_date = input_date("Enter the date: year-month-day " )
-            result = report_suma_all_sales_for_data(target_date)
+            result = report_all_sales_for_data(target_date)
             if result:
                 print(f"Total sale for {target_date} = {result}")
         
                 save_yes_or_no("Suma_sales_for_day.json", {"Total" :result})
 
-        elif choice == 6:
+        elif choice == 5:
             result = None
             start_date = input_date("Enter the start date (yyyy-mm-dd): ")
             if start_date:
                 end_date = input_date("Enter the end date (yyyy-mm-dd): ")
                 if end_date:    
-                    result = report_suma_all_sales_for_period(start_date, end_date)
+                    result = report_all_sales_for_period(start_date, end_date)
             
             if result:
                 print(f"Total sales for periof {start_date} - {end_date} = {result}")
         
                 save_yes_or_no("Suma_sales_for_period.json", {"Total" :result})
 
-        elif choice == 7:
+        elif choice == 6:
             result = report_suma_sale_for_each_emp()
             if result:
                 for i in result:
@@ -348,16 +340,18 @@ def menu_reports():
         
                 save_yes_or_no("sale_each_employee.json", result)
 
-        elif choice == 8:
+        elif choice == 7:
             emp_ID = get_int("Enter employee ID: ")
-            result = report_suma_sale_one_employee(emp_ID)
+            result = report_sale_one_employee(emp_ID)
 
             if result:
-                print(f"Total sale employee ID:{emp_ID} = {result}")
+                for i in result:
+
+                    print(i)
         
                 save_yes_or_no("sale_one_employee.json", {emp_ID :result})
 
-        elif choice == 9:
+        elif choice == 8:
             result = None
             start_date = input_date("Enter the start date (yyyy-mm-dd): ")
             if start_date:
@@ -373,7 +367,7 @@ def menu_reports():
                 "Model" : result[0],
                 "Total sale" : result[1]})
 
-        elif choice == 10:
+        elif choice == 9:
             result = None
             start_date = input_date("Enter the start date (yyyy-mm-dd): ")
             if start_date:
@@ -388,14 +382,14 @@ def menu_reports():
                 save_yes_or_no("best_employee_sale.json",{
                 "Employee" : result[0],
                 "Total sale" : result[1]})
-        elif choice == 11:
+        elif choice == 10:
             result = report_total_profit()
             if result:
                 print(f"Total profit: {result}")
         
                 save_yes_or_no("Total_profit.json",{
                 "Total profit" : result})
-        elif choice == 12:
+        elif choice == 11:
             result = None
             start_date = input_date("Enter the start date (yyyy-mm-dd): ")
             if start_date:

@@ -57,13 +57,19 @@ def report_all_sales():
         result = []
         for sale in sales:
             result.append({
-                "id": sale.id,
-                "employee_id": sale.employee_id,
-                "car_id": sale.car_id,
-                "sale_date": sale.sale_date.isoformat() if sale.sale_date else None,
-                "sold_price": sale.sold_price
-            })
-        return result
+                    "id": sale.id,
+                    "employee_id": sale.employee_id,
+                    "car_id": sale.car_id,
+                    "sale_date": sale.sale_date.isoformat() if sale.sale_date else None,
+                    "sold_price": sale.sold_price,
+                    "cost_price": sale.car.cost_price if sale.car else None,
+                    "profit": (sale.sold_price or 0) - (sale.car.cost_price or 0) if sale.car else None
+                })
+            
+        if not result:
+            print("No sales")
+        else:
+            return result
 
     except Exception as e:
         print(f"Error querying sales: {e}")
@@ -71,48 +77,61 @@ def report_all_sales():
         session.close()
 
 
-# Звіт загальної суми продажів за весь період
-def report_suma_all_sales():
+
+# Звіт продажів за вибраний день
+def report_all_sales_for_data(target_data: date):
     session = Session()
     try:
         sales = session.query(Sale).all()
-        suma = sum(s.sold_price or 0 for s in sales)
-        if suma == 0:
+        
+        result = []
+        for sale in sales: 
+            if target_data == sale.sale_date:
+                result.append({
+                    "id": sale.id,
+                    "employee_id": sale.employee_id,
+                    "car_id": sale.car_id,
+                    "sale_date": sale.sale_date.isoformat() if sale.sale_date else None,
+                    "sold_price": sale.sold_price,
+                    "cost_price": sale.car.cost_price if sale.car else None,
+                    "profit": (sale.sold_price or 0) - (sale.car.cost_price or 0) if sale.car else None
+                })
+
+        if not result:
             print("No sales")
         else:
-            return suma
+            return result
+
+
     except Exception as e:
-        print(f"Error calculating total sales: {e}")
+        print(f"Error: {e}")
 
     finally:
         session.close()
 
-# Звіт загальної суми продажів за вибраний день
-def report_suma_all_sales_for_data(target_data: date):
+# Звіт суми продажів за вибраний період
+def report_all_sales_for_period(start_date: date, end_date: date):
     session = Session()
     try:
         sales = session.query(Sale).all()
-        suma = sum(s.sold_price or 0 for s in sales if target_data == s.sale_date)
-        if suma == 0:
-            print("No sales for this date")
-        else:
-            return suma
-    except Exception as e:
-        print(f"Error calculating total sales: {e}")
+        
+        result = []
+        for sale in sales: 
+            if sale.sale_date and start_date <= sale.sale_date <= end_date:
+                result.append({
+                    "id": sale.id,
+                    "employee_id": sale.employee_id,
+                    "car_id": sale.car_id,
+                    "sale_date": sale.sale_date.isoformat() if sale.sale_date else None,
+                    "sold_price": sale.sold_price,
+                    "cost_price": sale.car.cost_price if sale.car else None,
+                    "profit": (sale.sold_price or 0) - (sale.car.cost_price or 0) if sale.car else None
+                })
 
-    finally:
-        session.close()
-
-# Звіт загальної суми продажів за вибраний період
-def report_suma_all_sales_for_period(start_date: date, end_date: date):
-    session = Session()
-    try:
-        sales = session.query(Sale).all()
-        suma = sum(s.sold_price or 0 for s in sales if s.sale_date and start_date <= s.sale_date <= end_date)
-        if suma == 0:
-            print("No sales for this date")
+        if not result:
+            print("No sales")
         else:
-            return suma
+            return result
     except Exception as e:
         print(f"Error calculating total sales: {e}")
 
@@ -144,22 +163,28 @@ def report_suma_sale_for_each_emp():
         session.close()
 
 # Звіт загальної сумм продажу одного працівника 
-def report_suma_sale_one_employee(id_employee):
+def report_sale_one_employee(id_employee):
     session = Session()
     try:
-        sales = session.query(Sale).all()
-        total_sales = 0
+        sales = session.query(Sale).filter(Sale.employee_id == id_employee).all()
 
-        
+        result = []
+
         for sale in sales:
-            emp_id = sale.employee_id
-            if emp_id == id_employee:
-                total_sales += sale.sold_price or 0
+            result.append({
+                "id": sale.id,
+                "employee_id": sale.employee_id,
+                "car_id": sale.car_id,
+                "sale_date": sale.sale_date.isoformat() if sale.sale_date else None,
+                "sold_price": sale.sold_price,
+                "cost_price": sale.car.cost_price if sale.car else None,
+                "profit": (sale.sold_price or 0) - (sale.car.cost_price or 0) if sale.car else None
+            })
 
-        if total_sales == 0:
+        if not result:
             print("No sales")
         else:
-            return total_sales
+            return result
     except Exception as e:
         print(f"Error calculating total sales: {e}")
     finally:
